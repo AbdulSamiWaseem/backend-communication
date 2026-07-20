@@ -9,3 +9,10 @@ export function validateAgeQuery(query: any) {
   });
   return schema.validateAsync(query);
 }
+
+export function validateJobIdParam(data: any) {
+  const schema = Joi.object({
+    jobId: Joi.string().uuid().required(),
+  });
+  return schema.validateAsync(data);
+}

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { fetchAge, getJobStatus } from "../services/ageService";
 import { handleResponse } from "../utils/responseHandler";
-import { validateAgeQuery } from "../validation/age";
+import { validateAgeQuery, validateJobIdParam } from "../validation/age";
 
 export const getAge = async (req: Request, res: Response) => {
   await handleResponse(
@@ -26,6 +26,8 @@ export const getAgeJob = async (req: Request, res: Response) => {
   await handleResponse(
     {
       handler: getJobStatus,
+      validationFn: validateJobIdParam,
+      validationData: { jobId: req.params.jobId },
       handlerParams: [req.params.jobId],
       successMessage: "Job status retrieved!",
     },

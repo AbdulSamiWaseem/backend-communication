@@ -32,11 +32,15 @@ const ageCallback = async (
     try {
       const result = await computeAgeFromDob(dob);
       console.log(`[callback] posting result for job ${jobId} → ${callbackUrl}`);
-      await axios.post(callbackUrl, {
-        jobId,
-        dob: result.dob,
-        age: result.age,
-      });
+      await axios.post(
+        callbackUrl,
+        {
+          jobId,
+          dob: result.dob,
+          age: result.age,
+        },
+        { timeout: 10_000 }
+      );
       console.log(`[callback] delivered job ${jobId}`);
     } catch (error: any) {
       console.error(`[callback] failed for job ${jobId}:`, error.message);
