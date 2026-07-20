@@ -9,8 +9,13 @@ export const getAge = async (req: Request, res: Response) => {
       handler: fetchAge,
       validationFn: validateAgeQuery,
       validationData: req.query,
-      handlerParams: [req.query.dob, req.query.mode],
-      successMessage: "Age retrieved successfully!",
+      handlerParams: [
+        req.query.dob,
+        req.query.mode,
+        req.query.callbackUrl,
+        req.query.jobId,
+      ],
+      successMessage: "Age calculation started!",
     },
     req,
     res

@@ -9,7 +9,9 @@ export type AgeResult = {
  * Age math is instant; the delay is intentional for the lab.
  */
 export const computeAgeFromDob = async (dob: string): Promise<AgeResult> => {
-  const delayMs = 30_000 + Math.floor(Math.random() * 10_001);
+  const delayMs = process.env.AGE_DELAY_MS
+    ? Number(process.env.AGE_DELAY_MS)
+    : 30_000 + Math.floor(Math.random() * 10_001);
   const birthDate = new Date(dob);
 
   console.log(

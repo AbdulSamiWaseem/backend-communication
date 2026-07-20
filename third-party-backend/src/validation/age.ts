@@ -5,6 +5,7 @@ export function validateAgeQuery(query: any) {
     dob: Joi.string().pattern(/^\d{4}-\d{2}-\d{2}$/).required(),
     mode: Joi.string().valid("callback", "polling", "webhook", "mqtt").optional(),
     callbackUrl: Joi.string().uri().optional(),
+    jobId: Joi.string().optional(),
   });
   return schema.validateAsync(query);
 }

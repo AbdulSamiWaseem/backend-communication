@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { getAge } from "../controllers/ageController";
+import { getAge, receiveAgeCallback } from "../controllers/ageController";
 
 const router = Router();
 
-router.get("/", getAge);
+router.get("/age", getAge);
+router.post("/callbacks/age/:jobId", receiveAgeCallback);
 
 export default router;
