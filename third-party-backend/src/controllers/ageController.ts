@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { fetchAge } from "../services/ageService";
+import { fetchAge, getJobStatus } from "../services/ageService";
 import { handleResponse } from "../utils/responseHandler";
 import { validateAgeQuery } from "../validation/age";
 
@@ -16,6 +16,18 @@ export const getAge = async (req: Request, res: Response) => {
         req.query.jobId,
       ],
       successMessage: "Age calculation started!",
+    },
+    req,
+    res
+  );
+};
+
+export const getAgeJob = async (req: Request, res: Response) => {
+  await handleResponse(
+    {
+      handler: getJobStatus,
+      handlerParams: [req.params.jobId],
+      successMessage: "Job status retrieved!",
     },
     req,
     res

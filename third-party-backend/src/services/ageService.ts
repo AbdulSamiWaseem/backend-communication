@@ -1,5 +1,11 @@
 import axios from "axios";
-import { computeAgeFromDob } from "../dal/ageDal";
+import {
+  completeJob,
+  computeAgeFromDob,
+  createJob,
+  failJob,
+  getJob,
+} from "../dal/ageDal";
 import { ResponseObject } from "../utils/constants";
 
 const ageCallback = async (
@@ -22,7 +28,6 @@ const ageCallback = async (
     };
   }
 
-  // Do not await — return pending right away
   void (async () => {
     try {
       const result = await computeAgeFromDob(dob);
@@ -49,6 +54,31 @@ const ageCallback = async (
   };
 };
 
+const agePolling = async (dob: string, resp: ResponseObject) => {
+  const job = createJob(dob);
+
+  void (async () => {
+    try {
+      const result = await computeAgeFromDob(dob);
+      completeJob(job.jobId, result.age);
+      console.log(`[polling] job ${job.jobId} completed, age=${result.age}`);
+    } catch (error: any) {
+      failJob(job.jobId, error.message || "Calculation failed");
+      console.error(`[polling] job ${job.jobId} failed:`, error.message);
+    }
+  })();
+
+  return {
+    ...resp,
+    success_message: "Age calculation started",
+    data: {
+      jobId: job.jobId,
+      status: "pending",
+      mode: "polling",
+    },
+  };
+};
+
 export const fetchAge = async (
   dob: string,
   queryMode: string | undefined,
@@ -64,6 +94,7 @@ export const fetchAge = async (
       case "callback":
         return ageCallback(dob, callbackUrl, jobId, resp);
       case "polling":
+        return agePolling(dob, resp);
       case "webhook":
       case "mqtt":
         return {
@@ -82,4 +113,34 @@ export const fetchAge = async (
       error_message: error.message || "Failed to resolve age",
     };
   }
+};
+
+export const getJobStatus = async (jobId: string, resp: ResponseObject) => {
+  const job = getJob(jobId);
+
+  if (!job) {
+    return {
+      error: true,
+      error_message: `Job not found: ${jobId}`,
+    };
+  }
+
+  if (job.status === "failed") {
+    return {
+      error: true,
+      error_message: job.error || "Job failed",
+    };
+  }
+
+  return {
+    ...resp,
+    success_message: "Job status retrieved",
+    data: {
+      jobId: job.jobId,
+      status: job.status,
+      dob: job.dob,
+      ...(job.status === "completed" ? { age: job.age } : {}),
+      mode: "polling",
+    },
+  };
 };

@@ -1,12 +1,25 @@
+import { randomUUID } from "crypto";
+
 export type AgeResult = {
   dob: string;
   age: number;
   durationMs: number;
 };
 
+type JobStatus = "pending" | "completed" | "failed";
+
+type Job = {
+  jobId: string;
+  dob: string;
+  status: JobStatus;
+  age?: number;
+  error?: string;
+};
+
+const jobs = new Map<string, Job>();
+
 /**
  * Simulates a slow third-party age calculation (30–40 seconds).
- * Age math is instant; the delay is intentional for the lab.
  */
 export const computeAgeFromDob = async (dob: string): Promise<AgeResult> => {
   const delayMs = process.env.AGE_DELAY_MS
@@ -48,4 +61,30 @@ export const computeAgeFromDob = async (dob: string): Promise<AgeResult> => {
       });
     }, delayMs);
   });
+};
+
+export const createJob = (dob: string): Job => {
+  const job: Job = {
+    jobId: randomUUID(),
+    dob,
+    status: "pending",
+  };
+  jobs.set(job.jobId, job);
+  return job;
+};
+
+export const getJob = (jobId: string): Job | undefined => jobs.get(jobId);
+
+export const completeJob = (jobId: string, age: number) => {
+  const job = jobs.get(jobId);
+  if (!job) return;
+  job.status = "completed";
+  job.age = age;
+};
+
+export const failJob = (jobId: string, error: string) => {
+  const job = jobs.get(jobId);
+  if (!job) return;
+  job.status = "failed";
+  job.error = error;
 };
