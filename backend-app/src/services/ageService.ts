@@ -3,6 +3,7 @@ import {
   cancelPending,
   createJobId,
   pollThirdPartyJob,
+  resolveCallback,
   waitForCallback,
 } from "../dal/ageDal";
 import { ResponseObject } from "../utils/constants";
@@ -74,6 +75,26 @@ const fetchWithCallback = async (dob: string, resp: ResponseObject) => {
       error_message: error.message || "Callback mode failed",
     };
   }
+};
+
+export const acceptAgeCallback = async (
+  jobId: string,
+  dob: string,
+  age: number,
+  resp: ResponseObject
+) => {
+  const ok = resolveCallback({ jobId, dob: String(dob), age: Number(age) });
+  if (!ok) {
+    return {
+      error: true,
+      error_message: `No pending request for job ${jobId}`,
+    };
+  }
+
+  return {
+    ...resp,
+    success_message: "Callback received",
+  };
 };
 
 const fetchWithPolling = async (dob: string, resp: ResponseObject) => {
