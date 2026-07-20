@@ -22,9 +22,7 @@ const jobs = new Map<string, Job>();
  * Simulates a slow third-party age calculation (30–40 seconds).
  */
 export const computeAgeFromDob = async (dob: string): Promise<AgeResult> => {
-  const delayMs = process.env.AGE_DELAY_MS
-    ? Number(process.env.AGE_DELAY_MS)
-    : 30_000 + Math.floor(Math.random() * 10_001);
+  const delayMs = 30_000 + Math.floor(Math.random() * 10_001);
   const birthDate = new Date(dob);
 
   console.log(

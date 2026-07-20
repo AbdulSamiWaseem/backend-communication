@@ -8,10 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (_req, res) => {
-  res.json({
-    message: "Third-party backend is running",
-    defaultMode: process.env.DEFAULT_COMMUNICATION_MODE || "callback",
-  });
+  res.json({ message: "Third-party backend is running" });
 });
 
 app.use("/api/age", ageRoutes);
