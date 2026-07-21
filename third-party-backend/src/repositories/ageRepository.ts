@@ -1,14 +1,5 @@
 import { randomUUID } from "crypto";
-
-type JobStatus = "pending" | "completed" | "failed";
-
-type Job = {
-  jobId: string;
-  dob: string;
-  status: JobStatus;
-  age?: number;
-  error?: string;
-};
+import { Job } from "../domain/ageJob";
 
 const jobs = new Map<string, Job>();
 
