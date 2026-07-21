@@ -1,4 +1,4 @@
-import axios from "axios";
+import { publishAgeResult } from "../dal/mqttDal";
 import {
   completeJob,
   computeAgeFromDob,
@@ -7,6 +7,7 @@ import {
   getJob,
 } from "../dal/ageDal";
 import { ResponseObject } from "../utils/constants";
+import axios from "axios";
 
 const ageCallback = async (
   dob: string,
@@ -83,6 +84,43 @@ const agePolling = async (dob: string, resp: ResponseObject) => {
   };
 };
 
+const ageMqtt = async (
+  dob: string,
+  jobId: string | undefined,
+  resp: ResponseObject
+) => {
+  if (!jobId) {
+    return {
+      error: true,
+      error_message: "jobId is required for mqtt mode",
+    };
+  }
+
+  void (async () => {
+    try {
+      const result = await computeAgeFromDob(dob);
+      await publishAgeResult({
+        jobId,
+        dob: result.dob,
+        age: result.age,
+      });
+      console.log(`[mqtt] delivered job ${jobId}`);
+    } catch (error: any) {
+      console.error(`[mqtt] failed for job ${jobId}:`, error.message);
+    }
+  })();
+
+  return {
+    ...resp,
+    success_message: "Age calculation started",
+    data: {
+      jobId,
+      status: "pending",
+      mode: "mqtt",
+    },
+  };
+};
+
 export const fetchAge = async (
   dob: string,
   queryMode: string | undefined,
@@ -99,8 +137,9 @@ export const fetchAge = async (
         return ageCallback(dob, callbackUrl, jobId, resp);
       case "polling":
         return agePolling(dob, resp);
-      case "webhook":
       case "mqtt":
+        return ageMqtt(dob, jobId, resp);
+      case "webhook":
         return {
           error: true,
           error_message: `${mode} mode is not implemented yet on third-party-backend`,

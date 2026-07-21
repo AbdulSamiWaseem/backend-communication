@@ -24,7 +24,11 @@ export const fetchAge = async (
     return fetchWithPolling(dob, resp);
   }
 
-  if (mode === "webhook" || mode === "mqtt") {
+  if (mode === "mqtt") {
+    return fetchWithMqtt(dob, resp);
+  }
+
+  if (mode === "webhook") {
     return {
       error: true,
       error_message: `${mode} mode is not implemented yet on backend-app`,
@@ -130,6 +134,47 @@ const fetchWithPolling = async (dob: string, resp: ResponseObject) => {
     return {
       error: true,
       error_message: error.message || "Polling mode failed",
+    };
+  }
+};
+
+const fetchWithMqtt = async (dob: string, resp: ResponseObject) => {
+  const jobId = createJobId();
+  const waitPromise = waitForCallback(jobId);
+
+  try {
+    const start = await callThirdParty({
+      dob,
+      mode: "mqtt",
+      jobId,
+    });
+
+    if (start.code !== 200) {
+      cancelPending(jobId);
+      return {
+        error: true,
+        error_message: start.message || "Third-party failed to start job",
+      };
+    }
+
+    console.log(`[mqtt] started job ${jobId}, waiting for broker message`);
+    const result = await waitPromise;
+
+    return {
+      ...resp,
+      success_message: "Age retrieved successfully",
+      data: {
+        dob: result.dob,
+        age: result.age,
+        jobId: result.jobId,
+        mode: "mqtt",
+      },
+    };
+  } catch (error: any) {
+    cancelPending(jobId);
+    return {
+      error: true,
+      error_message: error.message || "MQTT mode failed",
     };
   }
 };
