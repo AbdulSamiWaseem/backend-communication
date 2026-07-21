@@ -1,5 +1,5 @@
 import mqtt, { MqttClient } from "mqtt";
-import { resolveCallback } from "./ageDal";
+import { resolveCallback } from "../repositories/pendingRequestsRepository";
 
 const MQTT_URL = process.env.MQTT_URL || "mqtt://localhost:1883";
 export const MQTT_TOPIC = process.env.MQTT_TOPIC || "age/results";

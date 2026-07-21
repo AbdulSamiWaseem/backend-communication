@@ -1,11 +1,13 @@
 import {
   callThirdParty,
+  pollThirdPartyJob,
+} from "../clients/thirdPartyClient";
+import {
   cancelPending,
   createJobId,
-  pollThirdPartyJob,
   resolveCallback,
   waitForCallback,
-} from "../dal/ageDal";
+} from "../repositories/pendingRequestsRepository";
 import { ResponseObject } from "../utils/constants";
 
 export const fetchAge = async (

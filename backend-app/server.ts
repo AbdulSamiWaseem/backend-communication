@@ -1,6 +1,6 @@
 import "dotenv/config";
 import app from "./app";
-import { startMqttSubscriber } from "./src/dal/mqttDal";
+import { startMqttSubscriber } from "./src/clients/mqttClient";
 
 const PORT = process.env.PORT || 4000;
 

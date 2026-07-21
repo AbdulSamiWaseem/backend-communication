@@ -1,11 +1,11 @@
-import { publishAgeResult } from "../dal/mqttDal";
+import { publishAgeResult } from "../clients/mqttClient";
+import { computeAgeFromDob } from "../utils/calculateAge";
 import {
   completeJob,
-  computeAgeFromDob,
   createJob,
   failJob,
   getJob,
-} from "../dal/ageDal";
+} from "../repositories/ageRepository";
 import { ResponseObject } from "../utils/constants";
 import axios from "axios";
 
