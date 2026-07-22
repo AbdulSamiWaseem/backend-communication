@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import ageRoutes from "./src/routes/ageRoutes";
+import authRoutes from "./src/routes/authRoutes";
 
 const app = express();
 
@@ -12,5 +13,6 @@ app.get("/", (_req, res) => {
 });
 
 app.use("/api", ageRoutes);
+app.use("/api", authRoutes);
 
 export default app;
