@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET || "dev-oauth-cookie-secret"));
 
 app.get("/", (_req, res) => {
   res.json({ message: "Third-party backend is running" });

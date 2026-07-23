@@ -23,7 +23,7 @@ export const showAuthorize = (req: Request, res: Response) => {
     return res.status(400).send("Missing redirect_uri");
   }
 
-  const userId = req.cookies?.[OAUTH_USER_COOKIE];
+  const userId = req.signedCookies?.[OAUTH_USER_COOKIE];
   return res
     .status(200)
     .type("html")
@@ -41,7 +41,7 @@ export const handleLogin = (req: Request, res: Response) => {
     }
 
     const { code, userId } = loginAndIssueCode(email, password, redirectUri);
-    res.cookie(OAUTH_USER_COOKIE, userId);
+    res.cookie(OAUTH_USER_COOKIE, userId, { signed: true });
     console.log(`[oauth] issued code for ${email}, redirecting to callback`);
     return redirectWithCode(res, redirectUri, code);
   } catch (error: any) {
@@ -54,7 +54,7 @@ export const handleLogin = (req: Request, res: Response) => {
 
 export const handleConfirm = (req: Request, res: Response) => {
   const redirectUri = String(req.query.redirect_uri || "");
-  const userId = req.cookies?.[OAUTH_USER_COOKIE];
+  const userId = req.signedCookies?.[OAUTH_USER_COOKIE];
 
   try {
     if (!redirectUri) {
