@@ -12,11 +12,7 @@ export const renderLoginPage = (options: {
   error?: string;
 }): string => {
   const { redirectUri, error } = options;
-  console.log("[oauth] renderLoginPage", redirectUri, error);
-
   const loginAction = `/oauth/login?redirect_uri=${encodeURIComponent(redirectUri)}`;
-
-  console.log("[oauth] loginAction", loginAction);
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -29,7 +25,6 @@ export const renderLoginPage = (options: {
     label { display: block; margin: 12px 0 4px; font-size: 14px; }
     input { width: 100%; padding: 8px; box-sizing: border-box; }
     button { margin-top: 16px; width: 100%; padding: 10px; cursor: pointer; }
-    .hint { color: #555; font-size: 13px; margin-top: 16px; }
   </style>
 </head>
 <body>
@@ -46,16 +41,76 @@ export const renderLoginPage = (options: {
 </html>`;
 };
 
+export const renderConfirmPage = (options: {
+  redirectUri: string;
+  name: string;
+}): string => {
+  const { redirectUri, name } = options;
+  const q = `redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Confirm</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 360px; margin: 48px auto; padding: 0 16px; }
+    button { margin-top: 16px; width: 100%; padding: 10px; cursor: pointer; }
+    .secondary { background: transparent; border: 1px solid #ccc; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Continue as ${name}?</h1>
+  <form method="POST" action="/oauth/confirm?${q}">
+    <button type="submit">Allow</button>
+  </form>
+  <form method="POST" action="/oauth/switch?${q}">
+    <button type="submit" class="secondary">Use another account</button>
+  </form>
+</body>
+</html>`;
+};
+
+export const renderAuthorizePage = (
+  redirectUri: string,
+  userIdFromCookie?: string
+): string => {
+  const user = userIdFromCookie
+    ? findUserById(String(userIdFromCookie))
+    : undefined;
+
+  if (user) {
+    return renderConfirmPage({ redirectUri, name: user.name });
+  }
+
+  return renderLoginPage({ redirectUri });
+};
+
 export const loginAndIssueCode = (
   email: string,
   password: string,
   redirectUri: string
-): string => {
+): { code: string; userId: string } => {
   const user = findUserByEmail(email);
   if (!user || user.password !== password) {
     throw new Error("Invalid email or password");
   }
 
+  return {
+    code: createAuthCode(user.id, redirectUri),
+    userId: user.id,
+  };
+};
+
+export const issueCodeForUserId = (
+  userId: string,
+  redirectUri: string
+): string => {
+  const user = findUserById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
   return createAuthCode(user.id, redirectUri);
 };
 
