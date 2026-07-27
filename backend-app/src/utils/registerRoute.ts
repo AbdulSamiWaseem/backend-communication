@@ -11,9 +11,7 @@ type RouteConfig = {
   path: string;
   handler: RequestHandler;
   access?: Access;
-  middlewares?: RequestHandler[];
 };
-
 
 export const registerRoute = ({
   router,
@@ -21,7 +19,6 @@ export const registerRoute = ({
   path,
   handler,
   access,
-  middlewares = [],
 }: RouteConfig) => {
   const authChain: RequestHandler[] = [];
 
@@ -32,6 +29,5 @@ export const registerRoute = ({
     }
   }
 
-  router[method](path, ...authChain, ...middlewares, handler);
+  router[method](path, ...authChain, handler);
 };
-

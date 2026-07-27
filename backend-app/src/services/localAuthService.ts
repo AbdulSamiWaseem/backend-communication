@@ -13,6 +13,7 @@ export const login = async (
   if (!user || user.password !== password) {
     return {
       error: true,
+      statusCode: 401,
       error_message: "Invalid email or password",
     };
   }

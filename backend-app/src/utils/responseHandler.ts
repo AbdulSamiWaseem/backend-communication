@@ -22,8 +22,8 @@ export const handleResponse = async (options: any, req: Request, res: Response) 
     const resp = await handler(...handlerParams, RESP);
 
     if (resp.error) {
-      return res.status(400).json({
-        code: 400,
+      return res.status(resp.statusCode || 400).json({
+        code: resp.statusCode || 400,
         message: resp.error_message,
       });
     }
