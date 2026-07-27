@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const TOKEN_KEY = "access_token";
 
@@ -16,6 +17,10 @@ const authHeaders = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+const showError = (e: any) => {
+  const message = e?.response?.data?.message || "Request failed";
+  toast.error(message);
+};
 
 export const getApi = async (route: string) => {
   try {
@@ -25,6 +30,7 @@ export const getApi = async (route: string) => {
     return res.data.data;
   } catch (e: any) {
     if (e?.response?.status === 401) clearToken();
+    showError(e);
     return null;
   }
 };
@@ -37,6 +43,7 @@ export const postApi = async (route: string, payload: any) => {
     return res.data;
   } catch (e: any) {
     if (e?.response?.status === 401) clearToken();
+    showError(e);
     return null;
   }
 };
