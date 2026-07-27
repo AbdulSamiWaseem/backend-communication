@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
+import adminRoutes from "./src/routes/adminRoutes";
 import ageRoutes from "./src/routes/ageRoutes";
 import authRoutes from "./src/routes/authRoutes";
+import localAuthRoutes from "./src/routes/localAuthRoutes";
 
 const app = express();
 
@@ -14,5 +16,7 @@ app.get("/", (_req, res) => {
 
 app.use("/api", ageRoutes);
 app.use("/api", authRoutes);
+app.use("/api", localAuthRoutes);
+app.use("/api/admin", adminRoutes);
 
 export default app;
