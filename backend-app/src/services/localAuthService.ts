@@ -19,7 +19,7 @@ export const login = async (
   }
 
   const { access_token, expires_in } = createSession(user.id);
-  console.log(`[auth] ${user.email} logged in as ${user.role}`);
+  console.log(`[auth] ${user.email} logged in`);
 
   return {
     ...resp,
@@ -32,7 +32,7 @@ export const login = async (
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        permissions: user.permissions,
       },
     },
   };

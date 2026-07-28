@@ -4,6 +4,7 @@ import adminRoutes from "./src/routes/adminRoutes";
 import ageRoutes from "./src/routes/ageRoutes";
 import authRoutes from "./src/routes/authRoutes";
 import localAuthRoutes from "./src/routes/localAuthRoutes";
+import pageRoutes from "./src/routes/pageRoutes";
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use("/api", ageRoutes);
 app.use("/api", authRoutes);
 app.use("/api", localAuthRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/pages", pageRoutes);
 
 export default app;

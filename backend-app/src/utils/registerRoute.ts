@@ -1,9 +1,9 @@
 import { RequestHandler, Router } from "express";
-import { Role } from "../domain/role";
+import { Permission } from "../domain/permission";
 import { authenticate } from "../middleware/authenticate";
-import { requireRole } from "../middleware/requireRole";
+import { requirePermission } from "../middleware/requirePermission";
 
-type Access = "public" | Role[];
+type Access = "public" | Permission[];
 
 type RouteConfig = {
   router: Router;
@@ -22,11 +22,15 @@ export const registerRoute = ({
 }: RouteConfig) => {
   const authChain: RequestHandler[] = [];
 
-  if (access !== "public") {
-    authChain.push(authenticate);
-    if (Array.isArray(access)) {
-      authChain.push(requireRole(...access));
-    }
+  if (access === "public") {
+    router[method](path, handler);
+    return;
+  }
+
+  authChain.push(authenticate);
+
+  if (Array.isArray(access)) {
+    authChain.push(requirePermission(...access));
   }
 
   router[method](path, ...authChain, handler);

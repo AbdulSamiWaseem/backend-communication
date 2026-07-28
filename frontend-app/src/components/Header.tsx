@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { NAV_ITEMS } from "@/lib/access";
 import { useAuth } from "./AuthProvider";
 
 export function Header() {
@@ -15,18 +16,20 @@ export function Header() {
     router.replace("/login");
   };
 
+  const links = NAV_ITEMS.filter(
+    (item) =>
+      !item.permission || user.permissions?.includes(item.permission)
+  );
+
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
-        <nav className="flex gap-4 text-sm font-medium text-slate-600">
-          <Link href="/dashboard" className="hover:text-slate-900">
-            User Info
-          </Link>
-          {user.role === "admin" && (
-            <Link href="/admin" className="hover:text-slate-900">
-              Admin
+        <nav className="flex flex-wrap gap-4 text-sm font-medium text-slate-600">
+          {links.map((item) => (
+            <Link key={item.path} href={item.path} className="hover:text-slate-900">
+              {item.label}
             </Link>
-          )}
+          ))}
         </nav>
 
         <button

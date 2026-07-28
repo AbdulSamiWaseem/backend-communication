@@ -6,14 +6,20 @@ const users: User[] = [
     email: "admin@gmail.com",
     password: "123456",
     name: "Admin",
-    role: "admin",
+    permissions: [
+      "admin",
+      "about",
+      "contacts",
+      "reports",
+      "settings",
+    ],
   },
   {
     id: "2",
     email: "sami@gmail.com",
     password: "123456",
     name: "Sami",
-    role: "user",
+    permissions: ["about", "contacts"],
   },
 ];
 

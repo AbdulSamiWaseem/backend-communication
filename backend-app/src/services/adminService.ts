@@ -5,7 +5,7 @@ export const getOverview = async (resp: ResponseObject) => ({
   success_message: "Admin overview retrieved",
   data: {
     message: "ADMIN",
-    note: "This page is only visible to admin users.",
+    note: "This page requires the admin permission.",
     status: "ok",
   },
 });

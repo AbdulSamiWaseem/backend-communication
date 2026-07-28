@@ -12,7 +12,7 @@ export default function UserInfoPage() {
       <div className="mt-6 space-y-2 rounded-xl border border-slate-200 bg-white p-6 text-sm shadow-sm">
         <p><span className="text-slate-500">Name:</span> {user?.name}</p>
         <p><span className="text-slate-500">Email:</span> {user?.email}</p>
-        <p><span className="text-slate-500">Role:</span> {user?.role}</p>
+        <p><span className="text-slate-500">Permissions:</span> {user?.permissions?.join(", ") || "—"}</p>
         <p><span className="text-slate-500">ID:</span> {user?.id}</p>
       </div>
     </main>

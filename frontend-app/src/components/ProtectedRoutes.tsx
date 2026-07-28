@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { canAccessPath } from "@/lib/access";
 import { useAuth } from "./AuthProvider";
 
 export function ProtectedRoutes({ children }: { children: React.ReactNode }) {
@@ -16,8 +17,13 @@ export function ProtectedRoutes({ children }: { children: React.ReactNode }) {
   }, [user, isLoading, path, router]);
 
   if (isLoading) return null;
-  if (path === "/admin" && user?.role !== "admin") {
-    return <p className="m-auto p-8 text-slate-500">Access denied</p>;
+
+  if (user && !canAccessPath(user.permissions, path)) {
+    return (
+      <p className="m-auto p-8 text-slate-500">
+        You do not have permission to access this resource
+      </p>
+    );
   }
 
   return children;
