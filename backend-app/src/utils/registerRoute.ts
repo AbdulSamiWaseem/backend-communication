@@ -29,7 +29,7 @@ export const registerRoute = ({
 
   authChain.push(authenticate);
 
-  if (Array.isArray(access)) {
+  if (Array.isArray(access) && access.length > 0) {
     authChain.push(requirePermission(...access));
   }
 

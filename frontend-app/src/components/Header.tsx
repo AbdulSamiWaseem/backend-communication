@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { NAV_ITEMS } from "@/lib/access";
+import { hasPermission, NAV_ITEMS } from "@/lib/access";
 import { useAuth } from "./AuthProvider";
 
 export function Header() {
@@ -16,9 +16,8 @@ export function Header() {
     router.replace("/login");
   };
 
-  const links = NAV_ITEMS.filter(
-    (item) =>
-      !item.permission || user.permissions?.includes(item.permission)
+  const links = NAV_ITEMS.filter((item) =>
+    hasPermission(user.permissions, item.permission)
   );
 
   return (

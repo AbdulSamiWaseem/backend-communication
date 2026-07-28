@@ -7,11 +7,15 @@ export const NAV_ITEMS = [
   { path: "/settings", label: "Settings", permission: "settings" },
 ];
 
+export const hasPermission = (
+  permissions: string[] | undefined,
+  permission?: string
+) => !permission || (permissions?.includes(permission) ?? false);
+
 export const canAccessPath = (
   permissions: string[] | undefined,
   path: string
 ) => {
   const item = NAV_ITEMS.find((nav) => nav.path === path);
-  if (!item?.permission) return true;
-  return permissions?.includes(item.permission) ?? false;
+  return hasPermission(permissions, item?.permission);
 };
