@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { hasPermission, NAV_ITEMS } from "@/lib/access";
+import { matchesAccessRule, NAV_ITEMS } from "@/lib/access";
 import { useAuth } from "./AuthProvider";
 
 export function Header() {
@@ -17,7 +17,7 @@ export function Header() {
   };
 
   const links = NAV_ITEMS.filter((item) =>
-    hasPermission(user.permissions, item.permission)
+    matchesAccessRule(user.permissions, item.access)
   );
 
   return (
