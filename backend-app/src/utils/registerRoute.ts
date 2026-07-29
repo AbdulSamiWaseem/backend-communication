@@ -1,9 +1,11 @@
 import { RequestHandler, Router } from "express";
-import { Permission } from "../domain/permission";
 import { authenticate } from "../middleware/authenticate";
-import { requirePermission } from "../middleware/requirePermission";
+import {
+  AccessRule,
+  requirePermission,
+} from "../middleware/requirePermission";
 
-type Access = "public" | Permission[];
+type Access = "public" | AccessRule;
 
 type RouteConfig = {
   router: Router;
@@ -13,6 +15,9 @@ type RouteConfig = {
   access?: Access;
 };
 
+const hasAccessRule = (access: AccessRule) =>
+  Boolean(access.and?.length || access.or?.length);
+
 export const registerRoute = ({
   router,
   method,
@@ -20,17 +25,15 @@ export const registerRoute = ({
   handler,
   access,
 }: RouteConfig) => {
-  const authChain: RequestHandler[] = [];
-
   if (access === "public") {
     router[method](path, handler);
     return;
   }
 
-  authChain.push(authenticate);
+  const authChain: RequestHandler[] = [authenticate];
 
-  if (Array.isArray(access) && access.length > 0) {
-    authChain.push(requirePermission(...access));
+  if (access && hasAccessRule(access)) {
+    authChain.push(requirePermission(access));
   }
 
   router[method](path, ...authChain, handler);

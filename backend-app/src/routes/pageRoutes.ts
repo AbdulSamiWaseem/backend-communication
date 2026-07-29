@@ -13,7 +13,7 @@ registerRoute({
   router,
   method: "get",
   path: "/about",
-  access: ["about"],
+  access: { and: ["about"] },
   handler: getAbout,
 });
 
@@ -21,7 +21,7 @@ registerRoute({
   router,
   method: "get",
   path: "/contacts",
-  access: ["contacts"],
+  access: { and: ["contacts"] },
   handler: getContacts,
 });
 
@@ -29,7 +29,7 @@ registerRoute({
   router,
   method: "get",
   path: "/reports",
-  access: ["reports"],
+  access: { and: ["reports"] },
   handler: getReports,
 });
 
@@ -37,7 +37,7 @@ registerRoute({
   router,
   method: "get",
   path: "/settings",
-  access: ["settings"],
+  access: { and: ["settings"] },
   handler: getSettings,
 });
 

@@ -8,7 +8,7 @@ registerRoute({
   router,
   method: "get",
   path: "/overview",
-  access: ["admin"],
+  access: { and: ["admin"] },
   handler: getAdminOverview,
 });
 
